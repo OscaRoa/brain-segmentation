@@ -1,9 +1,7 @@
 library(ggseg)
 library(ggseg3d)
 library(ggsegExtra)
-library(plotly)
 library(dplyr)
-library(tidyr)
 library(ggplot2)
 
 ggseg()
@@ -54,7 +52,7 @@ ggseg(mapping = aes(fill = region), colour = "white", size=.1, position = "stack
           legend.text = element_text(size = 5)) +
     guides(fill = guide_legend(ncol = 7))
 
-# Simulador de datos para mostrar en un atlas
+# Simulación de datos para mostrar en el atlas dk
 someData <-  data.frame(
     region = rep(c("transverse temporal", "insula",
                    "precentral","superior parietal"),2),
@@ -69,6 +67,25 @@ cx_primarias <- data.frame(
     p = rep(0.01, 12)
 )
 
-ggseg(.data = cx_primarias, colour = "white", size = 0.1, position = "stacked", mapping = aes(fill = p))
+ggseg(
+    .data = cx_primarias,
+    colour = "white",
+    size = 0.1,
+    position = "stacked",
+    mapping = aes(fill = p)
+)
 
-# TODO hacer lo mismo pero con el atlas de aseg
+# Simulación de datos para mostrar en el atlas aseg
+subcor_data <- data.frame(
+    region = rep(c("amygdala", "hippocampus"), 2),
+    p = sample(seq(0.001, 0.05, 0.0001), 4),
+    stringsAsFactors = F
+)
+
+ggseg(
+    atlas = aseg,
+    .data = subcor_data,
+    colour = "white",
+    size = 0.1,
+    mapping = aes(fill = p)
+)
