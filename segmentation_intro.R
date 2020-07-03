@@ -2,6 +2,7 @@ library(ggseg)
 library(ggseg3d)
 library(ggsegExtra)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 
 ggseg()
@@ -75,17 +76,71 @@ ggseg(
     mapping = aes(fill = p)
 )
 
+# Regiones subcorticales
+ggseg(atlas = aseg, mapping = aes(fill = region)) +
+    theme(
+        legend.justification = c(1, 0),
+        legend.position = "bottom",
+        legend.text = element_text(size = 10)
+    ) +
+    guides(fill = guide_legend(ncol = 3))
+
 # Simulación de datos para mostrar en el atlas aseg
-subcor_data <- data.frame(
-    region = rep(c("amygdala", "hippocampus"), 2),
-    p = sample(seq(0.001, 0.05, 0.0001), 4),
+cerebellum <- data.frame(
+    region = c("cerebellum white matter", "cerebellum cortex"),
+    p = sample(seq(0.001, 0.05, 0.0001), 2),
     stringsAsFactors = F
 )
 
 ggseg(
     atlas = aseg,
-    .data = subcor_data,
+    .data = cerebellum,
+    colour = "white",
+    hemisphere = "midline",
+    size = 0.1,
+    mapping = aes(fill = p)
+)
+
+# Multiplot con regiones de interés
+cortical_areas <- data.frame(
+    region = c(rep("fusiform", 4), rep("lateral occipital", 2)),
+    p = sample(seq(0.001, 0.05, 0.0001), 6),
+    stringsAsFactors = F
+)
+
+amygdala <- data.frame(
+    region = c("amygdala", "amygdala"),
+    p = sample(seq(0.001, 0.05, 0.0001), 2),
+    stringsAsFactors = F
+)
+
+cortical_seg <- ggseg(
+    .data = cortical_areas,
+    colour = "white",
+    size = 0.1,
+    position = "stacked",
+    mapping = aes(fill = p)
+)
+
+subcortical_seg <- ggseg(
+    .data = amygdala,
+    atlas = aseg,
     colour = "white",
     size = 0.1,
     mapping = aes(fill = p)
 )
+
+cowplot::plot_grid(cortical_seg,
+                   subcortical_seg,
+                   labels = c("A: ctx", "B: subctx"))
+
+# Simulacion de datos 3D
+data_3D = dk_3d %>% 
+    filter(surf == "inflated" & hemi == "right") %>% 
+    unnest(cols = c(ggseg_3d)) %>% 
+    select(region) %>% 
+    na.omit() %>% 
+    mutate(p = sample(seq(0,.5, length.out = 100), nrow(.)) %>% 
+    round(2)) 
+
+ggseg3d(.data = data_3D, atlas = dk_3d, colour = "p", text = "p")
