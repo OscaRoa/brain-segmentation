@@ -119,7 +119,7 @@ cortical_seg <- ggseg(
     colour = "white",
     size = 0.1,
     position = "stacked",
-    mapping = aes(fill = p)
+        mapping = aes(fill = p)
 )
 
 subcortical_seg <- ggseg(
@@ -128,17 +128,95 @@ subcortical_seg <- ggseg(
     colour = "white",
     size = 0.1,
     mapping = aes(fill = p)
+) + theme(
+    axis.text = element_text(size = 25),
+    legend.justification = c(1, 0),
+    legend.position = "none",
+    legend.text = element_text(size = 4)
 )
 
-cowplot::plot_grid(cortical_seg,
-                   subcortical_seg,
-                   labels = c("A: ctx", "B: subctx"))
+# Regiones de interés para la práctica
+gyrus <- data.frame(
+    region = c("G and S occipital inf", "S temporal sup"),
+    p = c(0.001, 0.005),
+    stringsAsFactors = F
+)
+
+gyrus2 <- data.frame(
+    region = c("G oc-temp lat-fusifor"),
+    p = 0.001,
+    stringsAsFactors = F
+)
+
+gyrus3 <- data.frame(
+    region = c("S temporal sup"),
+    p = 0.001,
+    stringsAsFactors = F
+)
+
+gyrus_plot <- ggseg(
+    .data = gyrus,
+    atlas = desterieux,
+    colour = "black",
+    size = 0.1,
+    position = "stacked",
+    view = "lateral",
+    hemisphere = "right",
+    mapping = aes(fill = p, color = p)
+) + theme(
+    axis.text = element_text(size = 25),
+    legend.justification = c(1, 0),
+    legend.position = "none",
+    legend.text = element_text(size = 4)
+)
+
+gyrus_plot
+
+gyrus_plot_med <- ggseg(
+    .data = gyrus2,
+    atlas = desterieux,
+    colour = "black",
+    size = 0.1,
+    position = "stacked",
+    view = "medial",
+    mapping = aes(fill = p, color = p)
+) + theme(
+        axis.text = element_text(size = 25),
+        legend.justification = c(1, 0),
+        legend.position = "none",
+        legend.text = element_text(size = 4)
+    )
+
+gyrus_plot_left <- ggseg(
+    .data = gyrus3,
+    atlas = desterieux,
+    colour = "black",
+    size = 0.1,
+    position = "stacked",
+    view = "lateral",
+    hemisphere = "left",
+    mapping = aes(fill = p, color = p)
+) + theme(
+    axis.text = element_text(size = 25),
+    legend.justification = c(1, 0),
+    legend.position = "none",
+    legend.text = element_text(size = 4)
+)
+
+gyrus_plot_med
+
+cowplot::plot_grid(gyrus_plot, gyrus_plot_med,
+                   gyrus_plot_left, subcortical_seg,
+                   # labels = c("A", "B", "C"),
+                   hjust = -.05
+)
+##############################################################
 
 # Simulacion de datos 3D
 data_3D = dk_3d %>% 
     filter(surf == "inflated" & hemi == "right") %>% 
     unnest(cols = c(ggseg_3d)) %>% 
-    select(region) %>% 
+    select(region) %>%
     na.omit() %>% 
     mutate(p = sample(seq(0,.5, length.out = 100), nrow(.)) %>% 
     round(2)) 
