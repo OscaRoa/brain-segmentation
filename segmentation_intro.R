@@ -4,6 +4,8 @@ library(ggsegExtra)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(ggsegDesterieux)
+library(cowplot)
 
 ggseg()
 
@@ -126,42 +128,42 @@ subcortical_seg <- ggseg(
     .data = amygdala,
     atlas = aseg,
     colour = "white",
+    view = "axial",
     size = 0.1,
     mapping = aes(fill = p)
 ) + theme(
-    axis.text = element_text(size = 25),
+    axis.text = element_text(size = 20),
     legend.justification = c(1, 0),
     legend.position = "none",
     legend.text = element_text(size = 4)
 )
 
 # Regiones de interés para la práctica
-gyrus <- data.frame(
+occi_temp <- data.frame(
     region = c("G and S occipital inf", "S temporal sup"),
     p = c(0.001, 0.005),
     stringsAsFactors = F
 )
 
-gyrus2 <- data.frame(
+fusifor <- data.frame(
     region = c("G oc-temp lat-fusifor"),
-    p = 0.001,
+    p = 0.005,
     stringsAsFactors = F
 )
 
-gyrus3 <- data.frame(
-    region = c("S temporal sup"),
-    p = 0.001,
-    stringsAsFactors = F
-)
+# gyrus3 <- data.frame(
+#     region = c("S temporal sup"),
+#     p = 0.001,
+#     stringsAsFactors = F
+# )
 
-gyrus_plot <- ggseg(
+occi_temp_plot <- ggseg(
     .data = gyrus,
     atlas = desterieux,
     colour = "black",
     size = 0.1,
     position = "stacked",
     view = "lateral",
-    hemisphere = "right",
     mapping = aes(fill = p, color = p)
 ) + theme(
     axis.text = element_text(size = 25),
@@ -170,30 +172,15 @@ gyrus_plot <- ggseg(
     legend.text = element_text(size = 4)
 )
 
-gyrus_plot
+occi_temp_plot
 
-gyrus_plot_med <- ggseg(
-    .data = gyrus2,
+fusifor_plot <- ggseg(
+    .data = fusifor,
     atlas = desterieux,
     colour = "black",
     size = 0.1,
     position = "stacked",
     view = "medial",
-    mapping = aes(fill = p, color = p)
-) + theme(
-        axis.text = element_text(size = 25),
-        legend.justification = c(1, 0),
-        legend.position = "none",
-        legend.text = element_text(size = 4)
-    )
-
-gyrus_plot_left <- ggseg(
-    .data = gyrus3,
-    atlas = desterieux,
-    colour = "black",
-    size = 0.1,
-    position = "stacked",
-    view = "lateral",
     hemisphere = "left",
     mapping = aes(fill = p, color = p)
 ) + theme(
@@ -203,12 +190,34 @@ gyrus_plot_left <- ggseg(
     legend.text = element_text(size = 4)
 )
 
+fusifor_plot
+
+# gyrus_plot_left <- ggseg(
+#     .data = gyrus3,
+#     atlas = desterieux,
+#     colour = "black",
+#     size = 0.1,
+#     position = "stacked",
+#     view = "lateral",
+#     hemisphere = "left",
+#     mapping = aes(fill = p, color = p)
+# ) + theme(
+#     axis.text = element_text(size = 25),
+#     legend.justification = c(1, 0),
+#     legend.position = "none",
+#     legend.text = element_text(size = 4)
+# )
+
 gyrus_plot_med
 
-cowplot::plot_grid(gyrus_plot, gyrus_plot_med,
-                   gyrus_plot_left, subcortical_seg,
+plot_grid(occi_temp_plot, NULL, fusifor_plot, NULL, subcortical_seg, NULL,
                    # labels = c("A", "B", "C"),
-                   hjust = -.05
+                   nrow = 2,
+                   hjust = -.05,
+                   # scale = c(1.2, 1, 1.2, 1, 1, 1),
+                   rel_heights = c(1.5, 1),
+                   rel_widths = c(1, 0.8, 1)
+                   # rel_widths = c(0.8, 1, 0.8)
 )
 ##############################################################
 
