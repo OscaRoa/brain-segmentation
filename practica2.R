@@ -46,6 +46,18 @@ temporal_sup_left <- data.frame(
     stringsAsFactors = F
 )
 
+frontal <- data.frame(
+    region = rep("rostral middle frontal", 2),
+    p = c(0.001, 0.001),
+    stringsAsFactors = F
+)
+
+superior_frontal <- data.frame(
+    region = rep("superior frontal", 4),
+    p = rep(0.001, 4),
+    stringsAsFactors = F
+)
+
 occi_temp_plot <- ggseg(
     .data = occi_temp,
     atlas = desterieux,
@@ -100,8 +112,52 @@ temporal_sup_left_plot <- ggseg(
     axis.title.y=element_blank()
 )
 
+frontal_left_plot <- ggseg(
+    .data = frontal,
+    atlas = dk,
+    colour = "black",
+    size = 0.1,
+    # position = "stacked",
+    view = "lateral",
+    hemisphere = "left",
+    mapping = aes(fill = p, color = p)
+) + theme(
+    axis.text = element_text(size = 25),
+    legend.justification = c(1, 0),
+    legend.position = "none",
+    legend.text = element_text(size = 4),
+    axis.title.x=element_blank(),
+    axis.title.y=element_blank()
+)
+
+frontal_middle_plot <- ggseg(
+    .data = superior_frontal,
+    atlas = dk,
+    colour = "black",
+    size = 0.1,
+    # position = "stacked",
+    view = "medial",
+    hemisphere = "right",
+    mapping = aes(fill = p, color = p)
+) + theme(
+    axis.text = element_text(size = 25),
+    legend.justification = c(1, 0),
+    legend.position = "none",
+    legend.text = element_text(size = 4),
+    axis.title.x=element_blank(),
+    axis.title.y=element_blank()
+)
+
 plot_grid(occi_temp_plot, fusifor_plot, temporal_sup_left_plot, amygdala_plot,
           labels = c("G & S occi inf / S temp sup", "G fusifor", "S temp sup", "Amigdala"),
           nrow = 2,
           hjust = -.05
+)
+
+plot_grid(
+    frontal_left_plot, frontal_middle_plot,
+    labels = c("PFC lateral izquierda", "PFC medial derecha"),
+    nrow = 2,
+    hjust = -0.05,
+    label_size = 20
 )
