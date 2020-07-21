@@ -53,9 +53,9 @@ cortical <- data.frame(
             rep("Ventral visual", 3),
             rep("Giro temporal medio", 4),
             rep("PFC lateral", 4),
-            rep("PFC medial", 1),
+            "PFC medial",
             rep("Insula", 2),
-            rep("Giro fusiforme", 1)
+            "Giro fusiforme"
     ), 2),
     stringsAsFactors = F
 )
